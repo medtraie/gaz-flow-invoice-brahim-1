@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { useLanguage } from "@/context/LanguageContext";
@@ -18,6 +19,7 @@ export default function AutomaticDistributionPage() {
   const [includeRemaining, setIncludeRemaining] = useState(false);
   const [distributionMonth, setDistributionMonth] = useState(new Date().getMonth() + 1);
   const [distributionYear, setDistributionYear] = useState(new Date().getFullYear());
+  const [distributionDay, setDistributionDay] = useState(new Date().getDate());
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedInvoices, setGeneratedInvoices] = useState<Invoice[]>([]);
   const [remainingInventory, setRemainingInventory] = useState<GasCylinder[]>([]);
@@ -197,6 +199,8 @@ export default function AutomaticDistributionPage() {
         setDistributionMonth={setDistributionMonth}
         distributionYear={distributionYear}
         setDistributionYear={setDistributionYear}
+        distributionDay={distributionDay}
+        setDistributionDay={setDistributionDay}
         excludedHolidays={excludedHolidays}
         setExcludedHolidays={setExcludedHolidays}
         distributionDays={distributionDays}
