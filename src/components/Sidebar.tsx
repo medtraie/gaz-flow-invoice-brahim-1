@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -32,8 +31,8 @@ export function Sidebar() {
           {!collapsed && (
             <div className="flex items-center justify-center w-full">
               <img 
-                src="/lovable-uploads/77d6d35b-82b9-4036-bdb3-a20aa60f1f34.png" 
-                alt="SEBAI AMA Logo" 
+                src="/lovable-uploads/a9383b11-0230-4bb3-9035-a4b8b46e50bb.png" 
+                alt="ZAGAZ Logo" 
                 className="h-12 w-auto" 
               />
             </div>
