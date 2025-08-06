@@ -69,10 +69,16 @@ export default function InvoicesPage() {
       const qty3kg = invoice.items.find(item => item.description === '3KG')?.quantity || 0;
       const qty6kg = invoice.items.find(item => item.description === '6KG')?.quantity || 0;
       const qty12kg = invoice.items.find(item => item.description === '12KG')?.quantity || 0;
+      const qtyDetendeur = invoice.items.find(item => item.description === 'DETENDEUR CLIC-ON')?.quantity || 0;
+      const qtyPropane = invoice.items.find(item => item.description === 'PROPANE 34 KG')?.quantity || 0;
+      const qtyBng = invoice.items.find(item => item.description === 'BNG 12 KG')?.quantity || 0;
       
       const amount3kg = invoice.items.find(item => item.description === '3KG')?.amount || 0;
       const amount6kg = invoice.items.find(item => item.description === '6KG')?.amount || 0;
       const amount12kg = invoice.items.find(item => item.description === '12KG')?.amount || 0;
+      const amountDetendeur = invoice.items.find(item => item.description === 'DETENDEUR CLIC-ON')?.amount || 0;
+      const amountPropane = invoice.items.find(item => item.description === 'PROPANE 34 KG')?.amount || 0;
+      const amountBng = invoice.items.find(item => item.description === 'BNG 12 KG')?.amount || 0;
 
       return {
         'DATE': invoice.date,
@@ -80,20 +86,70 @@ export default function InvoicesPage() {
         '3': qty3kg,
         '6': qty6kg,
         '12': qty12kg,
+        'DETENDEUR CLIC-ON': qtyDetendeur,
+        'PROPANE 34 KG': qtyPropane,
+        'BNG 12 KG': qtyBng,
         'P.03KG': amount3kg.toFixed(2),
         'P.06KG': amount6kg.toFixed(2),
         'P.12KG': amount12kg.toFixed(2),
+        'P.DETENDEUR CLIC-ON': amountDetendeur.toFixed(2),
+        'P.PROPANE 34 KG': amountPropane.toFixed(2),
+        'P.BNG 12 KG': amountBng.toFixed(2),
         'Montant HT': invoice.subtotal.toFixed(2),
         'TVA': invoice.taxAmount.toFixed(2),
         'Montant TTC': invoice.total.toFixed(2)
       };
     });
 
+    // Calculate totals for numeric columns
+    const totals = {
+      'DATE': 'TOTAL',
+      'N° FACT': '',
+      '3': invoiceData.reduce((sum, row) => sum + row['3'], 0),
+      '6': invoiceData.reduce((sum, row) => sum + row['6'], 0),
+      '12': invoiceData.reduce((sum, row) => sum + row['12'], 0),
+      'DETENDEUR CLIC-ON': invoiceData.reduce((sum, row) => sum + row['DETENDEUR CLIC-ON'], 0),
+      'PROPANE 34 KG': invoiceData.reduce((sum, row) => sum + row['PROPANE 34 KG'], 0),
+      'BNG 12 KG': invoiceData.reduce((sum, row) => sum + row['BNG 12 KG'], 0),
+      'P.03KG': invoiceData.reduce((sum, row) => sum + parseFloat(row['P.03KG']), 0).toFixed(2),
+      'P.06KG': invoiceData.reduce((sum, row) => sum + parseFloat(row['P.06KG']), 0).toFixed(2),
+      'P.12KG': invoiceData.reduce((sum, row) => sum + parseFloat(row['P.12KG']), 0).toFixed(2),
+      'P.DETENDEUR CLIC-ON': invoiceData.reduce((sum, row) => sum + parseFloat(row['P.DETENDEUR CLIC-ON']), 0).toFixed(2),
+      'P.PROPANE 34 KG': invoiceData.reduce((sum, row) => sum + parseFloat(row['P.PROPANE 34 KG']), 0).toFixed(2),
+      'P.BNG 12 KG': invoiceData.reduce((sum, row) => sum + parseFloat(row['P.BNG 12 KG']), 0).toFixed(2),
+      'Montant HT': invoiceData.reduce((sum, row) => sum + parseFloat(row['Montant HT']), 0).toFixed(2),
+      'TVA': invoiceData.reduce((sum, row) => sum + parseFloat(row['TVA']), 0).toFixed(2),
+      'Montant TTC': invoiceData.reduce((sum, row) => sum + parseFloat(row['Montant TTC']), 0).toFixed(2)
+    };
+
+    // Add totals row to the data
+    const dataWithTotals = [...invoiceData, totals];
+
     const workbook = XLSX.utils.book_new();
     
-    const invoiceSheet = XLSX.utils.json_to_sheet(invoiceData, {
-      header: ['DATE', 'N° FACT', '3', '6', '12', 'P.03KG', 'P.06KG', 'P.12KG', 'Montant HT', 'TVA', 'Montant TTC']
+    const invoiceSheet = XLSX.utils.json_to_sheet(dataWithTotals, {
+      header: [
+        'DATE', 'N° FACT', '3', '6', '12', 'DETENDEUR CLIC-ON', 'PROPANE 34 KG', 'BNG 12 KG',
+        'P.03KG', 'P.06KG', 'P.12KG', 'P.DETENDEUR CLIC-ON', 'P.PROPANE 34 KG', 'P.BNG 12 KG',
+        'Montant HT', 'TVA', 'Montant TTC'
+      ]
     });
+
+    // Style the totals row (last row)
+    const totalRowIndex = dataWithTotals.length;
+    const range = XLSX.utils.decode_range(invoiceSheet['!ref'] || 'A1');
+    
+    // Apply bold formatting to the totals row
+    for (let col = range.s.c; col <= range.e.c; col++) {
+      const cellAddress = XLSX.utils.encode_cell({ r: totalRowIndex, c: col });
+      if (invoiceSheet[cellAddress]) {
+        invoiceSheet[cellAddress].s = {
+          font: { bold: true },
+          fill: { fgColor: { rgb: "FFFF00" } } // Yellow background for totals
+        };
+      }
+    }
+    
     XLSX.utils.book_append_sheet(workbook, invoiceSheet, 'Données par facture');
     
     const fileName = `Factures_${new Date().toISOString().slice(0, 10)}.xlsx`;
