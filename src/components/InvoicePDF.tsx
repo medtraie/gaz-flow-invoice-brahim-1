@@ -1,3 +1,4 @@
+
 import { jsPDF } from "jspdf";
 import { Invoice } from "@/types";
 import { numberToWords } from "@/lib/utils";
@@ -52,7 +53,7 @@ export class InvoicePDF {
     doc.setLineWidth(0.2);
     
     // Add logo and company header together
-    await this.addLogoAndHeader(doc);
+    await this.addLogoAndHeader(doc, invoice);
     
     // Add invoice details with professional styling
     this.addInvoiceDetails(doc, invoice);
@@ -67,13 +68,29 @@ export class InvoicePDF {
     this.addTotals(doc, invoice);
     
     // Add footer with enhanced branding
-    this.addFooter(doc);
+    this.addFooter(doc, invoice);
     
     return;
   }
 
-  private static async addLogoAndHeader(doc: jsPDF): Promise<void> {
-    const logoPath = '/lovable-uploads/8cfed0d4-471f-45fb-b8ab-076537305253.png';
+  private static async addLogoAndHeader(doc: jsPDF, invoice: Invoice): Promise<void> {
+    // Choose logo and address based on company
+    let logoPath: string;
+    let address: string[];
+    
+    if (invoice.companyName === 'STE ZAGAZ') {
+      logoPath = '/lovable-uploads/482faa3c-a7e3-4613-b2fa-c7cfa6303d72.png';
+      address = [
+        'SIEGE SOCIALE HAY MLY RACHID',
+        'RUE IN 67 CASABLANCA'
+      ];
+    } else {
+      logoPath = '/lovable-uploads/ecc93117-2467-444c-8d38-a02dec52c932.png';
+      address = [
+        '3 Rue Ait Ourir 2éme étage',
+        'Bourgogne 20000 CASABLANCA'
+      ];
+    }
     
     try {
       const img = new Image();
@@ -91,11 +108,6 @@ export class InvoicePDF {
             doc.setFontSize(11);
             doc.setTextColor(44, 62, 80);
             doc.setFont('helvetica', 'bold');
-            
-            const address = [
-              '38-40 RUE MONTAIGE',
-              'BATHA MAARIF'
-            ];
             
             // Position address with one line gap below logo and shifted left by one space
             const addressY = 15 + imgHeight + 8; // 8px gap (one line)
@@ -117,11 +129,6 @@ export class InvoicePDF {
       doc.setFontSize(11);
       doc.setTextColor(44, 62, 80);
       doc.setFont('helvetica', 'bold');
-      
-      const address = [
-        '38-40 RUE MONTAIGE',
-        'BATHA MAARIF'
-      ];
       
       doc.text(address, 16, 20, { align: 'left', lineHeightFactor: 1.4 });
     }
@@ -352,7 +359,7 @@ export class InvoicePDF {
     doc.text(`${amountInWords} dirhams TTC`, 15, totalsY + 42);
   }
 
-  private static addFooter(doc: jsPDF): void {
+  private static addFooter(doc: jsPDF, invoice: Invoice): void {
     const pageHeight = doc.internal.pageSize.height;
     const totalPages = doc.getNumberOfPages();
     const currentPage = doc.getCurrentPageInfo().pageNumber;
@@ -370,12 +377,22 @@ export class InvoicePDF {
     doc.setTextColor(88, 88, 88);
     doc.setFont('helvetica', 'normal');
     
-    // Professional footer information
-    const footerText = [
-      'STE SEBAI AMA - 38-40 RUE MONTAIGE BATHA MAARIF',
-      'TEL: 0522991403 - FAX: 0522992424',
-      'RC: 96175, CNSS: 6009197, PATENTE: 34772854, ICE: 000000664000017'
-    ];
+    // Company-specific footer information
+    let footerText: string[];
+    
+    if (invoice.companyName === 'STE ZAGAZ') {
+      footerText = [
+        'STE ZAGAZ – SIEGE SOCIALE HAY MLY RACHID RUE IN 67 CASABLANCA',
+        '',
+        'RC: 47817, CNSS: 1216937, PATENTE: 330002498, ICE: 000705019000083'
+      ];
+    } else {
+      footerText = [
+        'STE AFROKH GAZ – 3 Rue Ait Ourir 2éme étage Bourgogne 20000 CASABLANCA',
+        '',
+        'ICE: 001836353000051, Patente: 35492054, C.N.S.S: 5270814, R.C: 365591'
+      ];
+    }
     
     doc.text(footerText, 105, pageHeight - 25, { align: 'center', lineHeightFactor: 1.6 });
     
