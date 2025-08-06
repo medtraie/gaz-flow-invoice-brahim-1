@@ -104,6 +104,7 @@ export default function InvoicesPage() {
       return {
         'DATE': invoice.date,
         'N° FACT': invoice.number,
+        'CLIENT': invoice.client.name,
         '3': qty3kg,
         '6': qty6kg,
         '12': qty12kg,
@@ -126,6 +127,7 @@ export default function InvoicesPage() {
     const totals = {
       'DATE': 'TOTAL',
       'N° FACT': '',
+      'CLIENT': '',
       '3': invoiceData.reduce((sum, row) => sum + row['3'], 0),
       '6': invoiceData.reduce((sum, row) => sum + row['6'], 0),
       '12': invoiceData.reduce((sum, row) => sum + row['12'], 0),
@@ -150,7 +152,7 @@ export default function InvoicesPage() {
     
     const invoiceSheet = XLSX.utils.json_to_sheet(dataWithTotals, {
       header: [
-        'DATE', 'N° FACT', '3', '6', '12', 'DETENDEUR CLIC-ON', 'PROPANE 34 KG', 'BNG 12 KG',
+        'DATE', 'N° FACT', 'CLIENT', '3', '6', '12', 'DETENDEUR CLIC-ON', 'PROPANE 34 KG', 'BNG 12 KG',
         'P.03KG', 'P.06KG', 'P.12KG', 'P.DETENDEUR CLIC-ON', 'P.PROPANE 34 KG', 'P.BNG 12 KG',
         'Montant HT', 'TVA', 'Montant TTC'
       ]
