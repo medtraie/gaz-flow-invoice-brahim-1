@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -47,6 +46,7 @@ export default function DistributionSettings({
   setHideDay
 }: DistributionSettingsProps) {
   const [newHoliday, setNewHoliday] = useState<string>("");
+  const [distributionDay, setDistributionDay] = useState(new Date().getDate());
 
   // Calculate distribution days when month/year or holidays change
   useEffect(() => {
@@ -72,6 +72,10 @@ export default function DistributionSettings({
   const handleRemoveHoliday = (day: number) => {
     setExcludedHolidays(excludedHolidays.filter(d => d !== day));
     toast.success("Jour férié supprimé");
+  };
+
+  const handleDayChange = (value: string) => {
+    setDistributionDay(parseInt(value));
   };
 
   const handleMonthChange = (value: string) => {
@@ -102,6 +106,10 @@ export default function DistributionSettings({
     (_, i) => new Date().getFullYear() + i
   );
 
+  // Generate days for the selected month and year
+  const daysInMonth = new Date(distributionYear, distributionMonth, 0).getDate();
+  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+
   // Get current invoice number for display
   const currentInvoiceNumber = getCurrentInvoiceNumber();
   const nextInvoiceNumber = currentInvoiceNumber + 1;
@@ -114,7 +122,23 @@ export default function DistributionSettings({
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-4">
-            <div className="w-1/2">
+            <div className="w-1/3">
+              <Label htmlFor="day">Jour</Label>
+              <Select value={distributionDay.toString()} onValueChange={handleDayChange}>
+                <SelectTrigger id="day">
+                  <SelectValue placeholder="Sélectionner un jour" />
+                </SelectTrigger>
+                <SelectContent>
+                  {days.map((day) => (
+                    <SelectItem key={day} value={day.toString()}>
+                      {day}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="w-1/3">
               <Label htmlFor="month">Mois</Label>
               <Select value={distributionMonth.toString()} onValueChange={handleMonthChange}>
                 <SelectTrigger id="month">
@@ -130,7 +154,7 @@ export default function DistributionSettings({
               </Select>
             </div>
             
-            <div className="w-1/2">
+            <div className="w-1/3">
               <Label htmlFor="year">Année</Label>
               <Select value={distributionYear.toString()} onValueChange={handleYearChange}>
                 <SelectTrigger id="year">
