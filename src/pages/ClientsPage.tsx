@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
@@ -6,8 +5,19 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
-import { Upload } from "lucide-react";
+import { Upload, Trash2 } from "lucide-react";
 import * as XLSX from "xlsx";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function ClientsPage() {
   const { clients, setClients } = useAppContext();
@@ -88,11 +98,40 @@ export default function ClientsPage() {
     e.target.value = "";
   };
 
+  const handleClearAllClients = () => {
+    setClients([]);
+    toast.success("Tous les clients ont été supprimés");
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Gestion des Clients</h1>
         <div className="flex space-x-2">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                variant="destructive"
+                disabled={clients.length === 0}
+              >
+                <Trash2 className="mr-2 h-4 w-4" /> Effacer Tout
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Êtes-vous absolument sûr?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Cette action ne peut pas être annulée. Cela supprimera définitivement tous les clients ({clients.length} clients).
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                <AlertDialogAction onClick={handleClearAllClients} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                  Supprimer Tout
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
           <Button onClick={handleImportClick} className="bg-brand-teal hover:bg-opacity-90">
             <Upload className="mr-2 h-4 w-4" /> Importer depuis Excel
           </Button>

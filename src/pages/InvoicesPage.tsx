@@ -1,11 +1,10 @@
-
 import { useState } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Download, Printer, FileSpreadsheet, Search, Calendar as CalendarIcon } from "lucide-react";
+import { Download, Printer, FileSpreadsheet, Search, Calendar as CalendarIcon, Trash2 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -18,10 +17,22 @@ import { PDFViewer } from "@/components/PDFViewer";
 import { Invoice } from "@/types";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function InvoicesPage() {
   const { 
     invoices, 
+    setInvoices,
     selectedInvoices, 
     toggleInvoiceSelection, 
     selectAllInvoices, 
@@ -58,6 +69,12 @@ export default function InvoicesPage() {
     setFilterInvoiceNumber("");
     setFilterClient("");
     setFilterDate(undefined);
+  };
+
+  const handleClearAllInvoices = () => {
+    setInvoices([]);
+    deselectAllInvoices();
+    toast.success("Toutes les factures ont été supprimées");
   };
 
   const handleExportToExcel = () => {
@@ -202,6 +219,30 @@ export default function InvoicesPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Factures</h1>
         <div className="flex space-x-2">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                variant="destructive"
+                disabled={invoices.length === 0}
+              >
+                <Trash2 className="mr-2 h-4 w-4" /> Effacer Tout
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Êtes-vous absolument sûr?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Cette action ne peut pas être annulée. Cela supprimera définitivement toutes les factures ({invoices.length} factures).
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                <AlertDialogAction onClick={handleClearAllInvoices} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                  Supprimer Tout
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
           <Button 
             onClick={handleExportToExcel}
             disabled={invoices.length === 0}
