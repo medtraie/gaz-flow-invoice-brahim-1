@@ -30,11 +30,9 @@ export function Sidebar() {
         <div className="p-4 flex items-center justify-between border-b border-gray-200">
           {!collapsed && (
             <div className="flex items-center justify-center w-full">
-              <img 
-                src="/lovable-uploads/a9383b11-0230-4bb3-9035-a4b8b46e50bb.png" 
-                alt="ZAGAZ Logo" 
-                className="h-12 w-auto" 
-              />
+              <h1 className="text-xl font-bold text-brand-teal text-center">
+                ZAGAZ DISTRIBUTION
+              </h1>
             </div>
           )}
           <button
