@@ -10,7 +10,7 @@ export interface Client {
 
 // Product type
 export interface GasCylinder {
-  type: '12KG' | '6KG' | '3KG';
+  type: '12KG' | '6KG' | '3KG' | 'BNG 12 KG' | 'PROPANE 34 KG' | 'DETENDEUR CLIC-ON';
   totalQuantity: number;
   distributedQuantity: number;
   remainingQuantity: number;
