@@ -34,7 +34,7 @@ export default function SettingsPage() {
   
   const [formData, setFormData] = useState({
     secretCode: settings.secretCode,
-    companyName: 'SEBAI AMA' as const,
+    companyName: settings.companyName,
     minInvoiceAmount: settings.minInvoiceAmount,
     maxInvoiceAmount: settings.maxInvoiceAmount,
   });
@@ -46,6 +46,13 @@ export default function SettingsPage() {
     setFormData(prev => ({
       ...prev,
       [name]: name.includes("Amount") ? Number(value) : value
+    }));
+  };
+
+  const handleCompanyChange = (value: "STE ZAGAZ" | "SEBAI AMA") => {
+    setFormData(prev => ({
+      ...prev,
+      companyName: value
     }));
   };
 
@@ -116,13 +123,18 @@ export default function SettingsPage() {
               
               <div className="space-y-2">
                 <Label htmlFor="companyName">Nom de l'Entreprise</Label>
-                <Input
-                  id="companyName"
-                  type="text"
-                  value="SEBAI AMA"
-                  readOnly
-                  className="bg-gray-100 border border-gray-300"
-                />
+                <Select
+                  value={formData.companyName}
+                  onValueChange={handleCompanyChange}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="STE ZAGAZ">ZAGAZ</SelectItem>
+                    <SelectItem value="SEBAI AMA">AFROGH GAZ</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             

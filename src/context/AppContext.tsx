@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Client, GasCylinder, Invoice, Settings, InvoiceItem } from '@/types';
 import { generateInvoiceNumber, calculateTotal, initInvoiceNumberSystem } from '@/lib/utils';
@@ -181,7 +180,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       subtotal,
       taxAmount,
       total,
-      companyName: settings.companyName
+      companyName: settings.companyName // Use the company name from settings
     };
     
     // Update state
