@@ -15,6 +15,8 @@ interface DistributionSettingsProps {
   setDistributionMonth: (value: number) => void;
   distributionYear: number;
   setDistributionYear: (value: number) => void;
+  distributionDay: number;
+  setDistributionDay: (value: number) => void;
   excludedHolidays: number[];
   setExcludedHolidays: (value: number[]) => void;
   distributionDays: number[];
@@ -34,6 +36,8 @@ export default function DistributionSettings({
   setDistributionMonth,
   distributionYear,
   setDistributionYear,
+  distributionDay,
+  setDistributionDay,
   excludedHolidays,
   setExcludedHolidays,
   distributionDays,
@@ -46,7 +50,6 @@ export default function DistributionSettings({
   setHideDay
 }: DistributionSettingsProps) {
   const [newHoliday, setNewHoliday] = useState<string>("");
-  const [distributionDay, setDistributionDay] = useState(new Date().getDate());
 
   // Calculate distribution days when month/year or holidays change
   useEffect(() => {

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAppContext } from '@/context/AppContext';
 import { useLanguage } from '@/context/LanguageContext';
@@ -17,12 +16,18 @@ interface ManualInvoiceFormProps {
   hideDay?: boolean;
   useCustomInvoiceNumber?: boolean;
   startingInvoiceNumber?: string;
+  distributionDay?: number;
+  distributionMonth?: number;
+  distributionYear?: number;
 }
 
 export default function ManualInvoiceForm({ 
   hideDay = false, 
   useCustomInvoiceNumber = false, 
-  startingInvoiceNumber = "" 
+  startingInvoiceNumber = "",
+  distributionDay,
+  distributionMonth,
+  distributionYear
 }: ManualInvoiceFormProps) {
   const { t } = useLanguage();
   const { clients, inventory, setInvoices, invoices, setInventory, setInvoiceStartNumber } = useAppContext();
@@ -93,12 +98,19 @@ export default function ManualInvoiceForm({
     setItems(newItems);
   };
 
-  // Helper function to format date based on hideDay setting
-  const formatInvoiceDate = (date: Date): string => {
-    if (hideDay) {
-      return `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+  // Helper function to format date based on hideDay setting and selected date
+  const formatInvoiceDate = (date?: Date): string => {
+    let invoiceDate = date || new Date();
+    
+    // Use the selected date from distribution settings if provided
+    if (distributionDay && distributionMonth && distributionYear) {
+      invoiceDate = new Date(distributionYear, distributionMonth - 1, distributionDay);
     }
-    return date.toLocaleDateString('fr-FR');
+    
+    if (hideDay) {
+      return `${(invoiceDate.getMonth() + 1).toString().padStart(2, '0')}/${invoiceDate.getFullYear()}`;
+    }
+    return invoiceDate.toLocaleDateString('fr-FR');
   };
 
   const handleCreateInvoice = () => {
@@ -140,7 +152,7 @@ export default function ManualInvoiceForm({
     const manualInvoice = {
       id: crypto.randomUUID(),
       number: generateManualInvoiceNumber(), // Uses unified sequential numbering
-      date: formatInvoiceDate(new Date()),
+      date: formatInvoiceDate(), // Now uses the selected date from settings
       client: selectedClient,
       items: [...items],
       subtotal,

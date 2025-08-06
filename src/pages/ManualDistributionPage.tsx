@@ -8,6 +8,7 @@ export default function ManualDistributionPage() {
   const [includeRemaining, setIncludeRemaining] = useState(false);
   const [distributionMonth, setDistributionMonth] = useState(new Date().getMonth() + 1);
   const [distributionYear, setDistributionYear] = useState(new Date().getFullYear());
+  const [distributionDay, setDistributionDay] = useState(new Date().getDate());
   const [distributionDays, setDistributionDays] = useState<number[]>([]);
   const [excludedHolidays, setExcludedHolidays] = useState<number[]>([]);
   const [startingInvoiceNumber, setStartingInvoiceNumber] = useState<string>("");
@@ -27,6 +28,8 @@ export default function ManualDistributionPage() {
         setDistributionMonth={setDistributionMonth}
         distributionYear={distributionYear}
         setDistributionYear={setDistributionYear}
+        distributionDay={distributionDay}
+        setDistributionDay={setDistributionDay}
         excludedHolidays={excludedHolidays}
         setExcludedHolidays={setExcludedHolidays}
         distributionDays={distributionDays}
@@ -48,6 +51,9 @@ export default function ManualDistributionPage() {
             hideDay={hideDay}
             useCustomInvoiceNumber={useCustomInvoiceNumber}
             startingInvoiceNumber={startingInvoiceNumber}
+            distributionDay={distributionDay}
+            distributionMonth={distributionMonth}
+            distributionYear={distributionYear}
           />
         </CardContent>
       </Card>
