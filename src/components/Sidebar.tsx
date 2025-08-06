@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAppContext } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
-import { Settings, Database, FileText, Users, Box } from "lucide-react";
+import { Settings, Database, FileText, Users, Box, Zap, Edit } from "lucide-react";
 
 export function Sidebar() {
   const location = useLocation();
@@ -15,7 +15,8 @@ export function Sidebar() {
     { name: "Inventory", path: "/inventory", icon: <Box size={20} /> },
     { name: "Clients", path: "/clients", icon: <Users size={20} /> },
     { name: "Invoices", path: "/invoices", icon: <FileText size={20} /> },
-    { name: "Distribution", path: "/distribution", icon: <Database size={20} /> },
+    { name: "Distribution Automatique", path: "/distribution-automatic", icon: <Zap size={20} /> },
+    { name: "Distribution Manuelle", path: "/distribution-manual", icon: <Edit size={20} /> },
     { name: "Settings", path: "/settings", icon: <Settings size={20} /> },
   ];
 

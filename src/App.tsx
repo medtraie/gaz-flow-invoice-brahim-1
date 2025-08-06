@@ -13,7 +13,8 @@ import LoginPage from "./pages/LoginPage";
 import InventoryPage from "./pages/InventoryPage";
 import ClientsPage from "./pages/ClientsPage";
 import InvoicesPage from "./pages/InvoicesPage";
-import DistributionPage from "./pages/DistributionPage";
+import AutomaticDistributionPage from "./pages/AutomaticDistributionPage";
+import ManualDistributionPage from "./pages/ManualDistributionPage";
 import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 
@@ -39,7 +40,8 @@ const AppRoutes = () => {
       <Route path="/inventory" element={<ProtectedRoute><InventoryPage /></ProtectedRoute>} />
       <Route path="/clients" element={<ProtectedRoute><ClientsPage /></ProtectedRoute>} />
       <Route path="/invoices" element={<ProtectedRoute><InvoicesPage /></ProtectedRoute>} />
-      <Route path="/distribution" element={<ProtectedRoute><DistributionPage /></ProtectedRoute>} />
+      <Route path="/distribution-automatic" element={<ProtectedRoute><AutomaticDistributionPage /></ProtectedRoute>} />
+      <Route path="/distribution-manual" element={<ProtectedRoute><ManualDistributionPage /></ProtectedRoute>} />
       <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
