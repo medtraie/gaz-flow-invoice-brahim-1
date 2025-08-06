@@ -75,7 +75,10 @@ export default function InvoicesPage() {
   const handleClearAllInvoices = () => {
     setInvoices([]);
     deselectAllInvoices();
-    toast.success("Toutes les factures ont été supprimées");
+    toast({
+      title: "Succès",
+      description: "Toutes les factures ont été supprimées",
+    });
   };
 
   const handleExportToExcel = () => {
