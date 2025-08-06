@@ -250,9 +250,9 @@ export default function ManualInvoiceForm({
                 id="unit-price"
                 type="number"
                 min="0"
+                step="0.01"
                 value={newItem.unitPrice}
                 onChange={(e) => setNewItem({ ...newItem, unitPrice: parseFloat(e.target.value) || 0 })}
-                readOnly
               />
             </div>
 
