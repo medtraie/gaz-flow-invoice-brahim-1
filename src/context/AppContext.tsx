@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Client, GasCylinder, Invoice, Settings, InvoiceItem } from '@/types';
 import { generateInvoiceNumber, calculateTotal, initInvoiceNumberSystem } from '@/lib/utils';
@@ -30,20 +31,37 @@ const defaultSettings: Settings = {
   maxInvoiceAmount: 20000
 };
 
+const defaultInventory: GasCylinder[] = [
+  { type: '12KG', totalQuantity: 0, distributedQuantity: 0, remainingQuantity: 0, unitPrice: 0, taxRate: 0 },
+  { type: '6KG', totalQuantity: 0, distributedQuantity: 0, remainingQuantity: 0, unitPrice: 0, taxRate: 0 },
+  { type: '3KG', totalQuantity: 0, distributedQuantity: 0, remainingQuantity: 0, unitPrice: 0, taxRate: 0 },
+  { type: 'BNG 12 KG', totalQuantity: 0, distributedQuantity: 0, remainingQuantity: 0, unitPrice: 0, taxRate: 0 },
+  { type: 'PROPANE 34 KG', totalQuantity: 0, distributedQuantity: 0, remainingQuantity: 0, unitPrice: 0, taxRate: 0 },
+  { type: 'DETENDEUR CLIC-ON', totalQuantity: 0, distributedQuantity: 0, remainingQuantity: 0, unitPrice: 0, taxRate: 0 }
+];
+
 const AppContext = createContext<AppContextType | undefined>(undefined);
+
+// Function to merge existing inventory with default inventory
+const mergeInventory = (storedInventory: GasCylinder[]): GasCylinder[] => {
+  const merged = [...defaultInventory];
+  
+  // Update with stored values where they exist
+  storedInventory.forEach(storedItem => {
+    const index = merged.findIndex(defaultItem => defaultItem.type === storedItem.type);
+    if (index !== -1) {
+      merged[index] = storedItem;
+    }
+  });
+  
+  return merged;
+};
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Load stored data from localStorage
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [clients, setClients] = useState<Client[]>([]);
-  const [inventory, setInventory] = useState<GasCylinder[]>([
-    { type: '12KG', totalQuantity: 0, distributedQuantity: 0, remainingQuantity: 0, unitPrice: 0, taxRate: 0 },
-    { type: '6KG', totalQuantity: 0, distributedQuantity: 0, remainingQuantity: 0, unitPrice: 0, taxRate: 0 },
-    { type: '3KG', totalQuantity: 0, distributedQuantity: 0, remainingQuantity: 0, unitPrice: 0, taxRate: 0 },
-    { type: 'BNG 12 KG', totalQuantity: 0, distributedQuantity: 0, remainingQuantity: 0, unitPrice: 0, taxRate: 0 },
-    { type: 'PROPANE 34 KG', totalQuantity: 0, distributedQuantity: 0, remainingQuantity: 0, unitPrice: 0, taxRate: 0 },
-    { type: 'DETENDEUR CLIC-ON', totalQuantity: 0, distributedQuantity: 0, remainingQuantity: 0, unitPrice: 0, taxRate: 0 }
-  ]);
+  const [inventory, setInventory] = useState<GasCylinder[]>(defaultInventory);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [settings, setSettings] = useState<Settings>(defaultSettings);
   const [selectedInvoices, setSelectedInvoices] = useState<string[]>([]);
@@ -56,7 +74,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const storedSettings = localStorage.getItem('settings');
 
     if (storedClients) setClients(JSON.parse(storedClients));
-    if (storedInventory) setInventory(JSON.parse(storedInventory));
+    if (storedInventory) {
+      const parsedInventory = JSON.parse(storedInventory);
+      // Merge stored inventory with default inventory to ensure all types are present
+      setInventory(mergeInventory(parsedInventory));
+    }
     if (storedInvoices) setInvoices(JSON.parse(storedInvoices));
     if (storedSettings) setSettings(JSON.parse(storedSettings));
     
@@ -172,14 +194,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Function to delete all data
   const deleteAllData = () => {
     setClients([]);
-    setInventory([
-      { type: '12KG', totalQuantity: 0, distributedQuantity: 0, remainingQuantity: 0, unitPrice: 0, taxRate: 0 },
-      { type: '6KG', totalQuantity: 0, distributedQuantity: 0, remainingQuantity: 0, unitPrice: 0, taxRate: 0 },
-      { type: '3KG', totalQuantity: 0, distributedQuantity: 0, remainingQuantity: 0, unitPrice: 0, taxRate: 0 },
-      { type: 'BNG 12 KG', totalQuantity: 0, distributedQuantity: 0, remainingQuantity: 0, unitPrice: 0, taxRate: 0 },
-      { type: 'PROPANE 34 KG', totalQuantity: 0, distributedQuantity: 0, remainingQuantity: 0, unitPrice: 0, taxRate: 0 },
-      { type: 'DETENDEUR CLIC-ON', totalQuantity: 0, distributedQuantity: 0, remainingQuantity: 0, unitPrice: 0, taxRate: 0 }
-    ]);
+    setInventory(defaultInventory);
     setInvoices([]);
     setSelectedInvoices([]);
   };
