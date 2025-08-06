@@ -20,9 +20,11 @@ export default function InventoryPage() {
     value: string
   ) => {
     const newInventory = [...editedInventory];
-    const numValue = Number(value);
     
-    if (isNaN(numValue) || numValue < 0) return;
+    // Handle empty string as 0, but allow empty display
+    const numValue = value === '' ? 0 : Number(value);
+    
+    if (value !== '' && (isNaN(numValue) || numValue < 0)) return;
     
     newInventory[index] = {
       ...newInventory[index],
@@ -34,6 +36,11 @@ export default function InventoryPage() {
     }
     
     setEditedInventory(newInventory);
+  };
+
+  // Helper function to display value (empty string if 0, otherwise the value)
+  const displayValue = (value: number): string => {
+    return value === 0 ? '' : value.toString();
   };
 
   const saveChanges = () => {
@@ -74,9 +81,10 @@ export default function InventoryPage() {
                     <Input
                       type="number"
                       min="0"
-                      value={item.totalQuantity}
+                      value={displayValue(item.totalQuantity)}
                       onChange={(e) => handleChange(index, 'totalQuantity', e.target.value)}
                       className="w-24"
+                      placeholder="0"
                     />
                   </TableCell>
                   <TableCell>{item.distributedQuantity}</TableCell>
@@ -85,9 +93,10 @@ export default function InventoryPage() {
                     <Input
                       type="number"
                       min="0"
-                      value={item.unitPrice}
+                      value={displayValue(item.unitPrice)}
                       onChange={(e) => handleChange(index, 'unitPrice', e.target.value)}
                       className="w-24"
+                      placeholder="0"
                     />
                   </TableCell>
                   <TableCell>
@@ -95,9 +104,10 @@ export default function InventoryPage() {
                       type="number"
                       min="0"
                       max="100"
-                      value={item.taxRate}
+                      value={displayValue(item.taxRate)}
                       onChange={(e) => handleChange(index, 'taxRate', e.target.value)}
                       className="w-24"
+                      placeholder="0"
                     />
                   </TableCell>
                 </TableRow>
