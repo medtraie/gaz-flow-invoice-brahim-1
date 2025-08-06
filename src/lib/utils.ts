@@ -1,3 +1,4 @@
+
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { Client, GasCylinder, Invoice, InvoiceItem, Settings } from "@/types"
@@ -21,7 +22,7 @@ export function initInvoiceNumberSystem(startingNumber?: number) {
     if (storedInvoices) {
       const invoices = JSON.parse(storedInvoices) as Invoice[];
       if (invoices.length > 0) {
-        // Extract the highest number from existing invoices
+        // Extract the highest number from existing invoices - handle both old and new formats
         const numbers = invoices.map(inv => {
           const parts = inv.number.split('/');
           if (parts.length === 3) {
@@ -39,9 +40,9 @@ export function initInvoiceNumberSystem(startingNumber?: number) {
   }
 }
 
-// Generate sequential invoice number
+// Generate sequential invoice number with new format
 export function generateInvoiceNumber(): string {
-  const year = new Date().getFullYear();
+  const year = new Date().getFullYear().toString().slice(-2); // Get last 2 digits of year
   
   // Initialize the system if not already done
   if (lastInvoiceNumber === 0) {
@@ -54,12 +55,12 @@ export function generateInvoiceNumber(): string {
   // Format the number with leading zeros (5 digits)
   const formattedNumber = lastInvoiceNumber.toString().padStart(5, '0');
   
-  return `FAC/${year}/${formattedNumber}`;
+  return `FC/${year}/${formattedNumber}`;
 }
 
-// Generate manual invoice number with unified numbering system
+// Generate manual invoice number with unified numbering system and new format
 export function generateManualInvoiceNumber(): string {
-  const year = new Date().getFullYear();
+  const year = new Date().getFullYear().toString().slice(-2); // Get last 2 digits of year
   
   // Initialize the system if not already done
   if (lastInvoiceNumber === 0) {
@@ -254,7 +255,7 @@ export const generateInvoices = (
         // Create invoice with sequential number
         invoices.push({
           id: crypto.randomUUID(),
-          number: generateInvoiceNumber(), // This will ensure sequential numbering
+          number: generateInvoiceNumber(), // This will ensure sequential numbering with new format
           date: formatDate(new Date()),
           client,
           items: invoiceItems,
