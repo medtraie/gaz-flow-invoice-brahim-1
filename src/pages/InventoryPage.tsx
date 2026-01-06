@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,18 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
+import { Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function InventoryPage() {
   const { inventory, setInventory } = useAppContext();
@@ -48,13 +59,49 @@ export default function InventoryPage() {
     toast.success("Inventaire mis à jour avec succès");
   };
 
+  const clearInventory = () => {
+    const clearedInventory = editedInventory.map(item => ({
+      ...item,
+      totalQuantity: 0,
+      distributedQuantity: 0,
+      remainingQuantity: 0,
+      unitPrice: 0,
+      taxRate: 0,
+    }));
+    setEditedInventory(clearedInventory);
+    setInventory(clearedInventory);
+    toast.success("Inventaire effacé avec succès");
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Gestion de l'Inventaire</h1>
-        <Button onClick={saveChanges} className="bg-brand-teal hover:bg-opacity-90">
-          Enregistrer les Modifications
-        </Button>
+        <div className="flex gap-2">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" className="gap-2">
+                <Trash2 className="h-4 w-4" />
+                Effacer tout
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Êtes-vous sûr de vouloir effacer tout l'inventaire ? Cette action remettra toutes les valeurs à zéro.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                <AlertDialogAction onClick={clearInventory}>Effacer</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          <Button onClick={saveChanges} className="bg-brand-teal hover:bg-opacity-90">
+            Enregistrer les Modifications
+          </Button>
+        </div>
       </div>
 
       <Card>
