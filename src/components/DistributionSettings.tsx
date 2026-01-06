@@ -105,8 +105,8 @@ export default function DistributionSettings({
   ];
 
   const years = Array.from(
-    { length: 5 },
-    (_, i) => new Date().getFullYear() + i
+    { length: 6 },
+    (_, i) => 2025 + i
   );
 
   // Generate days for the selected month and year
