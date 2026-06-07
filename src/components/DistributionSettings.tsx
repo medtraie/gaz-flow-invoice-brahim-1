@@ -231,6 +231,35 @@ export default function DistributionSettings({
             </Label>
           </div>
 
+          {setLimitInvoiceCount && (
+            <div>
+              <div className="flex items-center space-x-2 mb-2">
+                <Switch
+                  id="limit-invoice-count"
+                  checked={!!limitInvoiceCount}
+                  onCheckedChange={setLimitInvoiceCount}
+                />
+                <Label htmlFor="limit-invoice-count">
+                  Limiter le nombre de factures générées
+                </Label>
+              </div>
+              {limitInvoiceCount && (
+                <div className="mb-2">
+                  <Input
+                    type="number"
+                    min="1"
+                    placeholder="Nombre de factures à générer"
+                    value={maxInvoiceCount ?? ""}
+                    onChange={(e) => setMaxInvoiceCount && setMaxInvoiceCount(e.target.value)}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Le reste de l'inventaire restera dans l'inventaire restant
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="flex items-center space-x-2">
             <Switch
               id="include-remaining"
@@ -241,6 +270,7 @@ export default function DistributionSettings({
               Inclure l'inventaire restant
             </Label>
           </div>
+
         </CardContent>
       </Card>
 
