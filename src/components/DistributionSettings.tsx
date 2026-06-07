@@ -51,7 +51,11 @@ export default function DistributionSettings({
   startingInvoiceNumber,
   setStartingInvoiceNumber,
   hideDay,
-  setHideDay
+  setHideDay,
+  limitInvoiceCount,
+  setLimitInvoiceCount,
+  maxInvoiceCount,
+  setMaxInvoiceCount
 }: DistributionSettingsProps) {
   const [newHoliday, setNewHoliday] = useState<string>("");
 
