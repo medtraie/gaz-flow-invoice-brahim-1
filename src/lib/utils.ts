@@ -161,7 +161,8 @@ export const generateInvoices = (
   inventory: GasCylinder[],
   clients: Client[],
   settings: Settings,
-  excludedHolidays: number[] = []
+  excludedHolidays: number[] = [],
+  maxInvoiceCount?: number
 ): { invoices: Invoice[], remainingInventory: GasCylinder[] } => {
   // Clone inventory to avoid modifying original
   const workingInventory = JSON.parse(JSON.stringify(inventory)) as GasCylinder[];
@@ -186,6 +187,9 @@ export const generateInvoices = (
   
   // While inventory has value above minimum invoice amount
   while (getTotalValue(workingInventory) >= settings.minInvoiceAmount && clients.length > 0) {
+    if (maxInvoiceCount && maxInvoiceCount > 0 && invoices.length >= maxInvoiceCount) {
+      break;
+    }
     // Get next client in rotation
     const client = shuffledClients[clientIndex % shuffledClients.length];
     clientIndex++;
