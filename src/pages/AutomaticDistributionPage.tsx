@@ -226,6 +226,10 @@ export default function AutomaticDistributionPage() {
         setStartingInvoiceNumber={setStartingInvoiceNumber}
         hideDay={hideDay}
         setHideDay={setHideDay}
+        limitInvoiceCount={limitInvoiceCount}
+        setLimitInvoiceCount={setLimitInvoiceCount}
+        maxInvoiceCount={maxInvoiceCount}
+        setMaxInvoiceCount={setMaxInvoiceCount}
       />
 
       <div className="pt-4">
