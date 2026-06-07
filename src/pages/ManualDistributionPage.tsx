@@ -42,6 +42,10 @@ export default function ManualDistributionPage() {
         setStartingInvoiceNumber={setStartingInvoiceNumber}
         hideDay={hideDay}
         setHideDay={setHideDay}
+        limitInvoiceCount={limitInvoiceCount}
+        setLimitInvoiceCount={setLimitInvoiceCount}
+        maxInvoiceCount={maxInvoiceCount}
+        setMaxInvoiceCount={setMaxInvoiceCount}
       />
 
       <Card>
