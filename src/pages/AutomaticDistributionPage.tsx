@@ -28,6 +28,8 @@ export default function AutomaticDistributionPage() {
   const [startingInvoiceNumber, setStartingInvoiceNumber] = useState<string>("");
   const [useCustomInvoiceNumber, setUseCustomInvoiceNumber] = useState<boolean>(false);
   const [hideDay, setHideDay] = useState<boolean>(false);
+  const [limitInvoiceCount, setLimitInvoiceCount] = useState<boolean>(false);
+  const [maxInvoiceCount, setMaxInvoiceCount] = useState<string>("");
 
   // Helper function to format date based on hideDay setting
   const formatInvoiceDate = (date: Date): string => {
