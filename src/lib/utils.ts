@@ -161,7 +161,8 @@ export const generateInvoices = (
   inventory: GasCylinder[],
   clients: Client[],
   settings: Settings,
-  excludedHolidays: number[] = []
+  excludedHolidays: number[] = [],
+  maxInvoiceCount?: number
 ): { invoices: Invoice[], remainingInventory: GasCylinder[] } => {
   // Clone inventory to avoid modifying original
   const workingInventory = JSON.parse(JSON.stringify(inventory)) as GasCylinder[];
