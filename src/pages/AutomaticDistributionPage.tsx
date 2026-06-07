@@ -64,12 +64,25 @@ export default function AutomaticDistributionPage() {
     setIsGenerating(true);
 
     try {
-      // Pass excluded holidays to the invoice generation function
+      // Determine max invoice count if limit is enabled
+      let maxCount: number | undefined = undefined;
+      if (limitInvoiceCount) {
+        const parsed = parseInt(maxInvoiceCount);
+        if (isNaN(parsed) || parsed <= 0) {
+          toast.error("Veuillez entrer un nombre valide de factures à générer");
+          setIsGenerating(false);
+          return;
+        }
+        maxCount = parsed;
+      }
+
+      // Pass excluded holidays and max count to the invoice generation function
       const { invoices: newInvoices, remainingInventory: remaining } = generateInvoices(
         inventory,
         clients,
         settings,
-        excludedHolidays
+        excludedHolidays,
+        maxCount
       );
 
       if (newInvoices.length === 0) {
