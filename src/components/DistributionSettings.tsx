@@ -27,6 +27,10 @@ interface DistributionSettingsProps {
   setStartingInvoiceNumber: (value: string) => void;
   hideDay: boolean;
   setHideDay: (value: boolean) => void;
+  limitInvoiceCount?: boolean;
+  setLimitInvoiceCount?: (value: boolean) => void;
+  maxInvoiceCount?: string;
+  setMaxInvoiceCount?: (value: string) => void;
 }
 
 export default function DistributionSettings({
