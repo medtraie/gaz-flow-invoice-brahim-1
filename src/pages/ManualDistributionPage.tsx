@@ -16,6 +16,7 @@ export default function ManualDistributionPage() {
   const [hideDay, setHideDay] = useState<boolean>(false);
   const [limitInvoiceCount, setLimitInvoiceCount] = useState<boolean>(false);
   const [maxInvoiceCount, setMaxInvoiceCount] = useState<string>("");
+  const [reservedQuantities, setReservedQuantities] = useState<Record<string, number>>({});
 
   return (
     <div className="space-y-6">
@@ -46,6 +47,8 @@ export default function ManualDistributionPage() {
         setLimitInvoiceCount={setLimitInvoiceCount}
         maxInvoiceCount={maxInvoiceCount}
         setMaxInvoiceCount={setMaxInvoiceCount}
+        reservedQuantities={reservedQuantities}
+        setReservedQuantities={setReservedQuantities}
       />
 
       <Card>

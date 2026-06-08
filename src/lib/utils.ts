@@ -162,11 +162,27 @@ export const generateInvoices = (
   clients: Client[],
   settings: Settings,
   excludedHolidays: number[] = [],
-  maxInvoiceCount?: number
+  maxInvoiceCount?: number,
+  reservedQuantities?: Record<string, number>
 ): { invoices: Invoice[], remainingInventory: GasCylinder[] } => {
   // Clone inventory to avoid modifying original
   const workingInventory = JSON.parse(JSON.stringify(inventory)) as GasCylinder[];
+
+  // Reserve quantities by removing them from available remaining quantity
+  const reserved: Record<string, number> = {};
+  if (reservedQuantities) {
+    workingInventory.forEach(c => {
+      const r = Math.max(0, Math.min(reservedQuantities[c.type] || 0, c.remainingQuantity));
+      reserved[c.type] = r;
+      c.remainingQuantity -= r;
+    });
+  }
+
+  // When limiting invoice count, bypass the minimum invoice amount constraint
+  const effectiveMinAmount = (maxInvoiceCount && maxInvoiceCount > 0) ? 0 : settings.minInvoiceAmount;
+
   const invoices: Invoice[] = [];
+
   
   // Track unique totals and their count to limit identical invoices
   const totalCounts: Record<number, number> = {};
@@ -186,7 +202,7 @@ export const generateInvoices = (
   };
   
   // While inventory has value above minimum invoice amount
-  while (getTotalValue(workingInventory) >= settings.minInvoiceAmount && clients.length > 0) {
+  while (getTotalValue(workingInventory) >= effectiveMinAmount && clients.length > 0) {
     if (maxInvoiceCount && maxInvoiceCount > 0 && invoices.length >= maxInvoiceCount) {
       break;
     }
@@ -251,8 +267,8 @@ export const generateInvoices = (
     if (invoiceItems.length > 0) {
       const { subtotal, taxAmount, total } = calculateTotal(invoiceItems);
       
-      // Only create invoice if it meets minimum amount
-      if (total >= settings.minInvoiceAmount) {
+      // Only create invoice if it meets effective minimum amount
+      if (total >= effectiveMinAmount) {
         // Track invoice totals for limiting identical amounts
         totalCounts[Math.round(total)] = (totalCounts[Math.round(total)] || 0) + 1;
         
@@ -281,11 +297,19 @@ export const generateInvoices = (
     }
     
     // Check if we can create any more invoices with the remaining inventory
-    if (getTotalValue(workingInventory) < settings.minInvoiceAmount) {
+    if (getTotalValue(workingInventory) < effectiveMinAmount) {
       break;
     }
   }
-  
+
+  // Restore reserved quantities so they appear in the remaining inventory
+  if (reservedQuantities) {
+    workingInventory.forEach(c => {
+      const r = reserved[c.type] || 0;
+      if (r > 0) c.remainingQuantity += r;
+    });
+  }
+
   return { invoices, remainingInventory: workingInventory };
 }
 

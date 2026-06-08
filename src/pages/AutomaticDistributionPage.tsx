@@ -30,6 +30,7 @@ export default function AutomaticDistributionPage() {
   const [hideDay, setHideDay] = useState<boolean>(false);
   const [limitInvoiceCount, setLimitInvoiceCount] = useState<boolean>(false);
   const [maxInvoiceCount, setMaxInvoiceCount] = useState<string>("");
+  const [reservedQuantities, setReservedQuantities] = useState<Record<string, number>>({});
 
   // Helper function to format date based on hideDay setting
   const formatInvoiceDate = (date: Date): string => {
@@ -82,7 +83,8 @@ export default function AutomaticDistributionPage() {
         clients,
         settings,
         excludedHolidays,
-        maxCount
+        maxCount,
+        limitInvoiceCount ? reservedQuantities : undefined
       );
 
       if (newInvoices.length === 0) {
@@ -230,6 +232,8 @@ export default function AutomaticDistributionPage() {
         setLimitInvoiceCount={setLimitInvoiceCount}
         maxInvoiceCount={maxInvoiceCount}
         setMaxInvoiceCount={setMaxInvoiceCount}
+        reservedQuantities={reservedQuantities}
+        setReservedQuantities={setReservedQuantities}
       />
 
       <div className="pt-4">
