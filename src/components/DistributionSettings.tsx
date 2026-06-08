@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { generateDistributionDays, getCurrentInvoiceNumber } from "@/lib/utils";
+import { useAppContext } from "@/context/AppContext";
 
 interface DistributionSettingsProps {
   includeRemaining: boolean;
