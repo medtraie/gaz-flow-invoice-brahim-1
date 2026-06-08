@@ -47,6 +47,8 @@ export default function ManualDistributionPage() {
         setLimitInvoiceCount={setLimitInvoiceCount}
         maxInvoiceCount={maxInvoiceCount}
         setMaxInvoiceCount={setMaxInvoiceCount}
+        reservedQuantities={reservedQuantities}
+        setReservedQuantities={setReservedQuantities}
       />
 
       <Card>
