@@ -250,7 +250,7 @@ export default function DistributionSettings({
                 </Label>
               </div>
               {limitInvoiceCount && (
-                <div className="mb-2">
+                <div className="mb-2 space-y-3">
                   <Input
                     type="number"
                     min="1"
@@ -258,9 +258,49 @@ export default function DistributionSettings({
                     value={maxInvoiceCount ?? ""}
                     onChange={(e) => setMaxInvoiceCount && setMaxInvoiceCount(e.target.value)}
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Le reste de l'inventaire restera dans l'inventaire restant
+                  <p className="text-xs text-gray-500">
+                    Le reste de l'inventaire restera dans l'inventaire restant.
+                    Le montant minimum de facture est ignoré.
                   </p>
+
+                  {setReservedQuantities && (
+                    <div className="border rounded-md p-3 bg-gray-50">
+                      <Label className="text-sm font-semibold">
+                        Quantité à réserver par type de bouteille (Inventaire Restant)
+                      </Label>
+                      <p className="text-xs text-gray-500 mb-2">
+                        Ces quantités ne seront pas utilisées dans les factures générées.
+                      </p>
+                      <div className="grid grid-cols-2 gap-2">
+                        {inventory
+                          .filter((c) => c.remainingQuantity > 0)
+                          .map((c) => (
+                            <div key={c.type} className="flex flex-col">
+                              <Label htmlFor={`reserved-${c.type}`} className="text-xs">
+                                {c.type} (dispo: {c.remainingQuantity})
+                              </Label>
+                              <Input
+                                id={`reserved-${c.type}`}
+                                type="number"
+                                min="0"
+                                max={c.remainingQuantity}
+                                value={(reservedQuantities && reservedQuantities[c.type]) ?? ""}
+                                onChange={(e) => {
+                                  const v = parseInt(e.target.value);
+                                  const next = { ...(reservedQuantities || {}) };
+                                  if (isNaN(v) || v <= 0) {
+                                    delete next[c.type];
+                                  } else {
+                                    next[c.type] = Math.min(v, c.remainingQuantity);
+                                  }
+                                  setReservedQuantities(next);
+                                }}
+                              />
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
