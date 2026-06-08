@@ -297,11 +297,19 @@ export const generateInvoices = (
     }
     
     // Check if we can create any more invoices with the remaining inventory
-    if (getTotalValue(workingInventory) < settings.minInvoiceAmount) {
+    if (getTotalValue(workingInventory) < effectiveMinAmount) {
       break;
     }
   }
-  
+
+  // Restore reserved quantities so they appear in the remaining inventory
+  if (reservedQuantities) {
+    workingInventory.forEach(c => {
+      const r = reserved[c.type] || 0;
+      if (r > 0) c.remainingQuantity += r;
+    });
+  }
+
   return { invoices, remainingInventory: workingInventory };
 }
 
