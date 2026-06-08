@@ -206,6 +206,7 @@ export const generateInvoices = (
     if (maxInvoiceCount && maxInvoiceCount > 0 && invoices.length >= maxInvoiceCount) {
       break;
     }
+    const inventoryBefore = workingInventory.reduce((s, c) => s + c.remainingQuantity, 0);
     // Get next client in rotation
     const client = shuffledClients[clientIndex % shuffledClients.length];
     clientIndex++;
