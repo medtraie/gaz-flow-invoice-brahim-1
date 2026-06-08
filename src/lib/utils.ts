@@ -296,7 +296,13 @@ export const generateInvoices = (
         });
       }
     }
-    
+
+    // Safety: if no inventory was consumed this iteration, stop to prevent infinite loop
+    const inventoryAfter = workingInventory.reduce((s, c) => s + c.remainingQuantity, 0);
+    if (inventoryAfter === inventoryBefore) {
+      break;
+    }
+
     // Check if we can create any more invoices with the remaining inventory
     if (getTotalValue(workingInventory) < effectiveMinAmount) {
       break;
