@@ -32,6 +32,8 @@ interface DistributionSettingsProps {
   setLimitInvoiceCount?: (value: boolean) => void;
   maxInvoiceCount?: string;
   setMaxInvoiceCount?: (value: string) => void;
+  reservedQuantities?: Record<string, number>;
+  setReservedQuantities?: (value: Record<string, number>) => void;
 }
 
 export default function DistributionSettings({
