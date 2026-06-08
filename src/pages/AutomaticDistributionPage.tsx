@@ -83,7 +83,8 @@ export default function AutomaticDistributionPage() {
         clients,
         settings,
         excludedHolidays,
-        maxCount
+        maxCount,
+        limitInvoiceCount ? reservedQuantities : undefined
       );
 
       if (newInvoices.length === 0) {
