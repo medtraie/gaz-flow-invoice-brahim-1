@@ -58,8 +58,11 @@ export default function DistributionSettings({
   limitInvoiceCount,
   setLimitInvoiceCount,
   maxInvoiceCount,
-  setMaxInvoiceCount
+  setMaxInvoiceCount,
+  reservedQuantities,
+  setReservedQuantities
 }: DistributionSettingsProps) {
+  const { inventory } = useAppContext();
   const [newHoliday, setNewHoliday] = useState<string>("");
 
   // Calculate distribution days when month/year or holidays change
