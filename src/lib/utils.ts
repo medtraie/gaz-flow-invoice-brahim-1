@@ -217,18 +217,30 @@ export const generateInvoices = (
     // Randomize target amount for this invoice within min-max range
     // This creates more natural variation in invoice amounts
     let targetAmount: number;
-    
-    do {
-      targetAmount = Math.floor(
-        settings.minInvoiceAmount + 
-        (Math.random() * (settings.maxInvoiceAmount - settings.minInvoiceAmount))
+
+    if (maxInvoiceCount && maxInvoiceCount > 0) {
+      // When limit is active, size each invoice so that all remaining inventory
+      // is distributed across the remaining requested invoices.
+      const remainingValue = getTotalValue(workingInventory);
+      const remainingCount = Math.max(1, maxInvoiceCount - invoices.length);
+      const base = remainingValue / remainingCount;
+      // Add small random variation (±15%) so invoices aren't identical
+      const variation = 0.85 + Math.random() * 0.3;
+      targetAmount = Math.max(1, Math.round((base * variation) / 10) * 10);
+    } else {
+      do {
+        targetAmount = Math.floor(
+          settings.minInvoiceAmount +
+          (Math.random() * (settings.maxInvoiceAmount - settings.minInvoiceAmount))
+        );
+        // Round to nearest 100 for more natural looking amounts
+        targetAmount = Math.round(targetAmount / 100) * 100;
+      } while (
+        totalCounts[targetAmount] >= MAX_IDENTICAL_INVOICES &&
+        Object.keys(totalCounts).length < 10
       );
-      // Round to nearest 100 for more natural looking amounts
-      targetAmount = Math.round(targetAmount / 100) * 100;
-    } while (
-      totalCounts[targetAmount] >= MAX_IDENTICAL_INVOICES && 
-      Object.keys(totalCounts).length < 10
-    );
+    }
+
     
     let invoiceTotal = 0;
     
