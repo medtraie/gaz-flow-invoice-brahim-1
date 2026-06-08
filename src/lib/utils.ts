@@ -267,8 +267,8 @@ export const generateInvoices = (
     if (invoiceItems.length > 0) {
       const { subtotal, taxAmount, total } = calculateTotal(invoiceItems);
       
-      // Only create invoice if it meets minimum amount
-      if (total >= settings.minInvoiceAmount) {
+      // Only create invoice if it meets effective minimum amount
+      if (total >= effectiveMinAmount) {
         // Track invoice totals for limiting identical amounts
         totalCounts[Math.round(total)] = (totalCounts[Math.round(total)] || 0) + 1;
         
