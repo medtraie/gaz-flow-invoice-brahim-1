@@ -162,11 +162,27 @@ export const generateInvoices = (
   clients: Client[],
   settings: Settings,
   excludedHolidays: number[] = [],
-  maxInvoiceCount?: number
+  maxInvoiceCount?: number,
+  reservedQuantities?: Record<string, number>
 ): { invoices: Invoice[], remainingInventory: GasCylinder[] } => {
   // Clone inventory to avoid modifying original
   const workingInventory = JSON.parse(JSON.stringify(inventory)) as GasCylinder[];
+
+  // Reserve quantities by removing them from available remaining quantity
+  const reserved: Record<string, number> = {};
+  if (reservedQuantities) {
+    workingInventory.forEach(c => {
+      const r = Math.max(0, Math.min(reservedQuantities[c.type] || 0, c.remainingQuantity));
+      reserved[c.type] = r;
+      c.remainingQuantity -= r;
+    });
+  }
+
+  // When limiting invoice count, bypass the minimum invoice amount constraint
+  const effectiveMinAmount = (maxInvoiceCount && maxInvoiceCount > 0) ? 0 : settings.minInvoiceAmount;
+
   const invoices: Invoice[] = [];
+
   
   // Track unique totals and their count to limit identical invoices
   const totalCounts: Record<number, number> = {};
