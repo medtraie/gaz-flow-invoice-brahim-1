@@ -232,6 +232,8 @@ export default function AutomaticDistributionPage() {
         setLimitInvoiceCount={setLimitInvoiceCount}
         maxInvoiceCount={maxInvoiceCount}
         setMaxInvoiceCount={setMaxInvoiceCount}
+        reservedQuantities={reservedQuantities}
+        setReservedQuantities={setReservedQuantities}
       />
 
       <div className="pt-4">
