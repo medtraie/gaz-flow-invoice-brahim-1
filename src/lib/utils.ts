@@ -219,14 +219,20 @@ export const generateInvoices = (
     let targetAmount: number;
 
     if (maxInvoiceCount && maxInvoiceCount > 0) {
-      // When limit is active, size each invoice so that all remaining inventory
-      // is distributed across the remaining requested invoices.
+      // When limit is active, pick a random target within [min, max] so amounts
+      // vary randomly (small and large mixed) while respecting settings.
+      // For the last invoice, consume all remaining value to avoid leftovers.
       const remainingValue = getTotalValue(workingInventory);
-      const remainingCount = Math.max(1, maxInvoiceCount - invoices.length);
-      const base = remainingValue / remainingCount;
-      // Add small random variation (±15%) so invoices aren't identical
-      const variation = 0.85 + Math.random() * 0.3;
-      targetAmount = Math.max(1, Math.round((base * variation) / 10) * 10);
+      const isLast = invoices.length === maxInvoiceCount - 1;
+      if (isLast) {
+        targetAmount = Math.max(1, Math.round(remainingValue / 10) * 10);
+      } else {
+        targetAmount = Math.floor(
+          settings.minInvoiceAmount +
+          (Math.random() * (settings.maxInvoiceAmount - settings.minInvoiceAmount))
+        );
+        targetAmount = Math.round(targetAmount / 100) * 100;
+      }
     } else {
       do {
         targetAmount = Math.floor(
