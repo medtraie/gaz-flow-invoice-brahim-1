@@ -219,19 +219,34 @@ export const generateInvoices = (
     let targetAmount: number;
 
     if (maxInvoiceCount && maxInvoiceCount > 0) {
-      // When limit is active, pick a random target within [min, max] so amounts
-      // vary randomly (small and large mixed) while respecting settings.
-      // For the last invoice, consume all remaining value to avoid leftovers.
+      // When a limit is active, distribute the remaining inventory across the
+      // remaining invoice slots so we hit exactly N invoices with amounts that
+      // stay within [min, max]. Each invoice gets a randomized target around
+      // the running average, clamped to leave enough value for the remaining
+      // slots to also meet the minimum.
       const remainingValue = getTotalValue(workingInventory);
-      const isLast = invoices.length === maxInvoiceCount - 1;
+      const remainingSlots = maxInvoiceCount - invoices.length;
+      const isLast = remainingSlots === 1;
+
       if (isLast) {
         targetAmount = Math.max(1, Math.round(remainingValue / 10) * 10);
       } else {
-        targetAmount = Math.floor(
-          settings.minInvoiceAmount +
-          (Math.random() * (settings.maxInvoiceAmount - settings.minInvoiceAmount))
-        );
-        targetAmount = Math.round(targetAmount / 100) * 100;
+        const avg = remainingValue / remainingSlots;
+        // Random multiplier gives small/large mix around the average
+        let t = avg * (0.5 + Math.random());
+        // Clamp to user-configured min/max
+        t = Math.max(settings.minInvoiceAmount, Math.min(settings.maxInvoiceAmount, t));
+        // Keep enough value for remaining slots (each needs >= min)
+        const upperCap = remainingValue - settings.minInvoiceAmount * (remainingSlots - 1);
+        if (upperCap >= settings.minInvoiceAmount) {
+          t = Math.min(t, upperCap);
+        }
+        // Don't leave more than remaining slots * max can absorb
+        const lowerCap = remainingValue - settings.maxInvoiceAmount * (remainingSlots - 1);
+        if (lowerCap > t) {
+          t = lowerCap;
+        }
+        targetAmount = Math.max(1, Math.round(t / 100) * 100);
       }
     } else {
       do {
